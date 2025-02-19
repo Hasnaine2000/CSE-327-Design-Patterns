@@ -1,0 +1,78 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Strategy Interface
+class TransportStrategy
+{
+public:
+    virtual ~TransportStrategy() {}
+    virtual string Deliver() const = 0;
+};
+
+// Concrete Strategies
+class TruckStrategy : public TransportStrategy
+{
+public:
+    string Deliver() const override
+    {
+        return "Truck is delivering your product!";
+    }
+};
+
+class ShipStrategy : public TransportStrategy
+{
+public:
+    string Deliver() const override
+    {
+        return "Ship is delivering your product!";
+    }
+};
+
+class PlaneStrategy : public TransportStrategy
+{
+public:
+    string Deliver() const override
+    {
+        return "Plane is delivering your product!";
+    }
+};
+
+// Context Class
+class Logistics
+{
+private:
+    TransportStrategy *strategy;
+
+public:
+    Logistics(TransportStrategy *strategy) : strategy(strategy) {}
+
+    void SetStrategy(TransportStrategy *newStrategy)
+    {
+        strategy = newStrategy;
+    }
+
+    void DeliverGoods() const
+    {
+        cout << "Your goods are on the way: " << strategy->Deliver() << endl;
+    }
+};
+
+// Client Code
+int main()
+{
+    TruckStrategy truck;
+    ShipStrategy ship;
+    PlaneStrategy plane;
+
+    Logistics logistics(&truck);
+    logistics.DeliverGoods();
+
+    logistics.SetStrategy(&ship);
+    logistics.DeliverGoods();
+
+    logistics.SetStrategy(&plane);
+    logistics.DeliverGoods();
+
+    return 0;
+}
