@@ -1,0 +1,59 @@
+Class Oberver
+{
+    public:
+    virtual voil update(message)
+}
+
+Class Subject
+{
+    public:
+    virtual void subscribe(Oberver *observer)=0
+    virtual void unsubscribe(Oberver *observer)=0
+    virtual void notify()= 0
+}
+
+Class Groupchat:Public Subject
+{
+    private:
+    string &message
+    List Observer *observers
+
+    public:
+    void subscribe(Observer *observer){
+        observer.pushback(observers)
+    }
+    void unsubscribe(Observer *observer){
+        observer.erase(observers)
+    }
+    void notify(){
+        for each (observer in observers)
+        observers->update(&message)
+    }
+    void setMessage(str msg){
+        message = msg
+    }
+}
+
+class friend : public Observer
+{
+    private:
+    id
+    public:
+    friendA(){
+    id=this.id    
+    }
+    void update(&message)override{
+        print("message")
+    }
+}
+
+
+int main(){
+
+    friend a,b;
+    Groupchat.subscribe(a)
+    Groupchat.subscribe(b)
+
+    Groupchat.setMessage("Chudi torare")
+    Groupchat.notify()
+}
