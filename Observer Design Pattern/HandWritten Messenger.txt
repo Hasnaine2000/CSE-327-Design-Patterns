@@ -39,8 +39,8 @@ class friend : public Observer
     private:
     id
     public:
-    friendA(){
-    id=this.id    
+    friend(Subject &subject) : id (subject){
+        id.subscribe();
     }
     void update(&message)override{
         print("message")
@@ -50,9 +50,10 @@ class friend : public Observer
 
 int main(){
 
-    friend a,b;
-    Groupchat.subscribe(a)
-    Groupchat.subscribe(b)
+    friend a("Soikot");
+    friend b("Achuda");
+    Groupchat.subscribe(&a)
+    Groupchat.subscribe(&b)
 
     Groupchat.setMessage("Chudi torare")
     Groupchat.notify()

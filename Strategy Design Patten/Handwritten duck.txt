@@ -1,0 +1,96 @@
+Class FlyBehavior
+{
+    public:
+    virtual void fly()=0
+}
+Class FlywithWings: Public FlyBehavior
+{
+    public:
+    void fly() override
+    {
+        cout<<"Flying"<<endl;
+    }
+}
+Class NoFly: public FlyBehavior
+{
+    public:
+    void fly()override
+    {
+        cout<<"Cant fly"<<endl;
+    }
+}
+
+Class QuackBehavior
+{
+    public: 
+    virtual void quack()=0
+}
+Class LoudQuack : public QuackBehavior
+{
+    public:
+    void quack()override
+    {
+        cout<<"loud quack"<<endl;
+    }
+}
+Class MuteQuack : public QuackBehavior
+{
+    public:
+    void quack() override
+    {
+        cout<<"Cant quack"<<endl;
+    }
+}
+
+
+Class Duck
+{
+    private:
+    FlyBehavior *fl;
+    QuackBehavior *qc;
+
+    public:
+    virtual void setFlybehavior(f){
+        fl = f;
+    }
+    virtual void setQuackbehavior(q){
+        qc =q;
+    }
+    virtual void performfly(){
+        fl->FlyBehavior
+    }
+    virtual void performQuack(){
+        qc->QuackBehavior
+    }
+}
+
+Class CityDuck : public Duck
+{
+    public:
+    CityDuck()
+    {
+        fl = new FlywithWings
+        qc = new LoudQuack
+    }
+    
+}
+
+Class RubberDuck : public Duck
+{
+    public : 
+    RubberDuck(){
+        fl= new NoFly
+        qc = new  MuteQuack
+    }
+}
+
+
+main(){
+    CityDuck cd;
+    RubberDuck rd;
+
+    cd.performfly();
+    cd.performQuack()
+    rd.performfly()
+    rd.performQuack()
+}
