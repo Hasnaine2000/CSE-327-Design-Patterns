@@ -34,7 +34,18 @@ Class Groupchat:Public Subject
     }
 }
 
-
+class friend : public Observer
+{
+    private:
+    id
+    public:
+    friend(Subject &subject) : id (subject){
+        id.subscribe();
+    }
+    void update(&message)override{
+        print("message")
+    }
+}
 
 
 int main(){
@@ -49,15 +60,3 @@ int main(){
 }
 
 
-class friend : public Observer
-{
-    private:
-    id
-    public:
-    friend(Subject &subject) : id (subject){
-        id.subscribe();
-    }
-    void update(&message)override{
-        print("message")
-    }
-}
