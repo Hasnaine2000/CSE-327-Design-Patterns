@@ -1,0 +1,55 @@
+#include <iostream>
+#include <mutex>
+
+using namespace std;
+
+class Logger
+{
+public:
+    static Logger *getLogger()
+    {
+        // Double-checked locking for thread safety
+        if (loggerInstance == nullptr)
+        {
+            lock_guard<mutex> lock(mtx);
+            if (loggerInstance == nullptr)
+            {
+                loggerInstance = new Logger();
+            }
+        }
+        return loggerInstance;
+    }
+
+    void Log(string msg)
+    {
+        counter++;
+        cout << "Log " << counter << ": " << msg << endl;
+    }
+
+private:
+    static Logger *loggerInstance;
+    static int counter;
+    static mutex mtx; // Mutex for thread safety
+
+    Logger()
+    {
+        cout << "Logger Initialized!" << endl;
+    }
+};
+
+// Initialize static members
+Logger *Logger::loggerInstance = nullptr;
+int Logger::counter = 0;
+mutex Logger::mtx;
+
+// Usage Example
+int main()
+{
+    Logger *logger1 = Logger::getLogger();
+    logger1->Log("This is a log message.");
+
+    Logger *logger2 = Logger::getLogger();
+    logger2->Log("This is another log message.");
+
+    return 0;
+}
