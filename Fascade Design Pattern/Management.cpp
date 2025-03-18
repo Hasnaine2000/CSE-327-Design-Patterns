@@ -1,4 +1,3 @@
-#pragma once
 #include <iostream>
 using namespace std;
 
@@ -29,10 +28,6 @@ private:
     int _state;
 };
 
-#pragma once
-#include <iostream>
-using namespace std;
-
 class MisDepartment {
 public:
     void submitNetworkRequest() {
@@ -60,10 +55,6 @@ private:
     int _state;
 };
 
-#pragma once
-#include <iostream>
-using namespace std;
-
 class FacilitiesDepartment {
 public:
     void submitNetworkRequest() {
@@ -90,13 +81,6 @@ private:
     };
     int _state;
 };
-
-#pragma once
-#include "misDepartment.h"
-#include "electricianUnion.h"
-#include "facilitiesDepartment.h"
-#include <iostream>
-using namespace std;
 
 class FacilitiesFacade {
 public:
@@ -150,8 +134,6 @@ private:
     ElectricianUnion _electrician;
     MisDepartment _technician;
 };
-
-#include "facilitiesFacade.h"
 
 int main() {
     FacilitiesFacade facilities;
