@@ -8,11 +8,10 @@ class Logger
 public:
     static Logger *getLogger()
     {
-        // Double-checked locking for thread safety
-        if (loggerInstance == nullptr)
+        if (loggerInstance == nullptr) // First check (not locked)
         {
-            lock_guard<mutex> lock(mtx);
-            if (loggerInstance == nullptr)
+            lock_guard<mutex> lock(mtx); // Lock before creating instance
+            if (loggerInstance == nullptr) // Second check (thread safety)
             {
                 loggerInstance = new Logger();
             }
@@ -20,7 +19,7 @@ public:
         return loggerInstance;
     }
 
-    void Log(string msg)
+    void Log(const string &msg)
     {
         counter++;
         cout << "Log " << counter << ": " << msg << endl;
@@ -31,10 +30,15 @@ private:
     static int counter;
     static mutex mtx; // Mutex for thread safety
 
+    // Private constructor to prevent external instantiation
     Logger()
     {
         cout << "Logger Initialized!" << endl;
     }
+
+    // Deleting copy constructor and assignment operator
+    Logger(const Logger &) = delete;
+    Logger &operator=(const Logger &) = delete;
 };
 
 // Initialize static members
