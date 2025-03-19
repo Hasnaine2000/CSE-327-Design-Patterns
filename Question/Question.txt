@@ -1,0 +1,20 @@
+### **Question: Video Streaming Platform Design Patterns**
+
+You have been hired to develop a **Video Streaming Platform** that allows users to watch movies and TV shows. The system must be scalable, efficient, and maintainable. Implement the system using the following design patterns:
+
+1. **Singleton**: Ensure that the video streaming service has only one instance running to manage streaming requests.  
+2. **Factory**: Create a factory that generates different types of video content (Movies, TV Shows, Documentaries).  
+3. **Facade**: Provide a simplified interface to start and stop a video, hiding complex subsystems like buffering, authentication, and DRM (Digital Rights Management).  
+4. **Proxy**: Implement a proxy that checks whether a user has a valid subscription before allowing them to stream content.  
+5. **Decorator**: Allow users to add extra features (e.g., Subtitles, 4K resolution, Dolby Audio) dynamically to a video stream.  
+
+### **Requirements:**  
+- Implement a `VideoStreamingService` that follows the **Singleton** pattern.  
+- Use the **Factory** pattern to generate different types of `VideoContent`.  
+- Implement a **Facade** that provides an easy-to-use interface for users to start and stop videos.  
+- Use a **Proxy** to verify user subscription before allowing access to content.  
+- Implement the **Decorator** pattern to dynamically enhance video features like subtitles, 4K, and Dolby Audio.  
+
+### **Instructions:**  
+- Write the necessary classes implementing each design pattern.  
+- Show how a user interacts with the system by creating an example where a user tries to watch a **Movie** with **4K resolution and subtitles**, but is blocked if they don't have a valid subscription.
