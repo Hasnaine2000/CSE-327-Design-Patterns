@@ -1,164 +1,177 @@
-#pragma once
 #include <iostream>
-#include <vector>
+#include <string>
 #include <list>
-#include <memory>
-class MenuItem {
-    public:
-        MenuItem() = default;
-        MenuItem(std::string name, std::string description, bool vegetarian, double price)
-            : name(std::move(name)), description(std::move(description)), vegetarian(vegetarian), price(price) {}
-    
-        std::string getName() const { return name; }
-        std::string getDescription() const { return description; }
-        bool isVegetarian() const { return vegetarian; }
-        double getPrice() const { return price; }
-    
-    private:
-        std::string name;
-        std::string description;
-        bool vegetarian;
-        double price = 0.0;
-    };
-// ==================== MENU ITEM ====================
+#include <array>
+using namespace std;
+
+// MenuItem class
 class MenuItem {
 public:
-    MenuItem(std::string name, std::string desc, bool veg, double price) 
-        : name(name), description(desc), vegetarian(veg), price(price) {}
+    MenuItem() = default;
+    MenuItem(string_view n, string_view d, bool v, double p)
+        : name(n), description(d), vegetarian(v), price(p) {}
 
-    std::string getName() const { return name; }
-    std::string getDescription() const { return description; }
+    string getName() const { return name; }
+    string getDescription() const { return description; }
     bool isVegetarian() const { return vegetarian; }
     double getPrice() const { return price; }
 
 private:
-    std::string name, description;
-    bool vegetarian;
-    double price;
+    string name;
+    string description;
+    bool vegetarian = false;
+    double price = 0.0;
 };
 
-// ==================== ITERATOR INTERFACE ====================
-template <typename T>
+// PancakeHouseMenu class
+class PancakeHouseMenu {
+    public:
+        PancakeHouseMenu() {
+            addItem("K&B's Pancake Breakfast", "Pancakes with scrambled eggs and toast", true, 2.99);
+            addItem("Regular Pancake Breakfast", "Pancakes with fried eggs, sausage", false, 2.99);
+            addItem("Blueberry Pancakes", "Pancakes made with fresh blueberries", true, 3.49);
+            addItem("Waffles", "Waffles with your choice of blueberries or strawberries", true, 3.59);
+        }
+    
+        void addItem(string_view name, string_view description, bool vegetarian, double price) {
+            menuItems.emplace_back(name, description, vegetarian, price);
+        }
+    
+        Iterator<MenuItem>* createIterator() {
+            return new PancakeHouseMenuIterator(menuItems);
+        }
+    
+        string getMenuDescription() const {
+            return "ObjectVille Pancake House Menu";
+        }
+    
+    private:
+        list<MenuItem> menuItems;
+    };
+    
+    // DinerMenu class
+    class DinerMenu {
+    public:
+        static const size_t MAX_ITEMS = 6;
+    
+        DinerMenu() {
+            addItem("Vegetarian BLT", "(Fakin') Bacon with lettuce & tomato on whole wheat", true, 2.99);
+            addItem("BLT", "Bacon with lettuce & tomato on whole wheat", false, 2.99);
+            addItem("Soup of the day", "Soup of the day, with a side of potato salad", false, 3.29);
+            addItem("Hotdog", "A hot dog, with sauerkraut, relish, onions, topped with cheese", false, 3.05);
+            addItem("Steamed Veggies and Brown Rice", "Steamed vegetables over brown rice", true, 3.99);
+            addItem("Pasta", "Spaghetti with Marinara Sauce, and a slice of sourdough bread", true, 3.89);
+        }
+    
+        void addItem(string_view name, string_view description, bool vegetarian, double price) {
+            if (numberOfItems < MAX_ITEMS) {
+                menuItems[numberOfItems++] = MenuItem(name, description, vegetarian, price);
+            } else {
+                cerr << "Sorry, menu is full! Can't add item to menu\n";
+            }
+        }
+    
+        Iterator<MenuItem>* createIterator() {
+            return new DinerMenuIterator(menuItems);
+        }
+    
+        string getMenuDescription() const {
+            return "ObjectVille Diner Menu";
+        }
+    
+    private:
+        array<MenuItem, MAX_ITEMS> menuItems;
+        size_t numberOfItems = 0;
+    };
+
+
+
+
+// Iterator Interface
+template<typename T>
 class Iterator {
 public:
     virtual ~Iterator() = default;
-    virtual bool hasNext() const = 0;
     virtual T* next() = 0;
+    virtual bool hasNext() const = 0;
 };
 
-// ==================== PANCAKE HOUSE MENU ====================
-class PancakeHouseMenu {
+// PancakeHouseMenu Iterator (uses std::list)
+class PancakeHouseMenuIterator : public Iterator<MenuItem> {
 public:
-    PancakeHouseMenu() {
-        addItem("K&B's Pancake Breakfast", "Pancakes with scrambled eggs and toast", true, 2.99);
-        addItem("Regular Pancake Breakfast", "Pancakes with fried eggs, sausage", false, 2.99);
-        addItem("Blueberry Pancakes", "Pancakes made with fresh blueberries", true, 3.49);
-        addItem("Waffles", "Waffles with your choice of blueberries or strawberries", true, 3.59);
+    PancakeHouseMenuIterator(list<MenuItem>& i) : items(i), iter(items.begin()) {}
+    
+    MenuItem* next() override {
+        return &*iter++;
     }
 
-    void addItem(std::string name, std::string desc, bool veg, double price) {
-        menuItems.emplace_back(name, desc, veg, price);
-    }
-
-    std::list<MenuItem>& getMenuItems() { return menuItems; }
-
-    class PancakeHouseMenuIterator : public Iterator<MenuItem> {
-    public:
-        PancakeHouseMenuIterator(std::list<MenuItem>& items) : items(items), iter(items.begin()) {}
-        bool hasNext() const override { return iter != items.end(); }
-        MenuItem* next() override { return &*(iter++); }
-    private:
-        std::list<MenuItem>& items;
-        std::list<MenuItem>::iterator iter;
-    };
-
-    std::unique_ptr<Iterator<MenuItem>> createIterator() {
-        return std::make_unique<PancakeHouseMenuIterator>(menuItems);
+    bool hasNext() const override {
+        return iter != items.end();
     }
 
 private:
-    std::list<MenuItem> menuItems;
+    list<MenuItem>& items;
+    list<MenuItem>::iterator iter;
 };
 
-// ==================== DINER MENU ====================
-class DinerMenu {
+// DinnerMenu Iterator (uses std::array)
+class DinerMenuIterator : public Iterator<MenuItem> {
 public:
     static const size_t MAX_ITEMS = 6;
+    DinerMenuIterator(array<MenuItem, MAX_ITEMS>& i) : items(i) {}
 
-    DinerMenu() {
-        addItem("Vegetarian BLT", "(Fakin') Bacon with lettuce & tomato on whole wheat", true, 2.99);
-        addItem("BLT", "Bacon with lettuce & tomato on whole wheat", false, 2.99);
-        addItem("Soup of the day", "Soup of the day, with a side of potato salad", false, 3.29);
-        addItem("Hotdog", "A hot dog, with sauerkraut, relish, onions, topped with cheese", false, 3.05);
-        addItem("Steamed Veggies and Brown Rice", "Steamed vegetables over brown rice", true, 3.99);
-        addItem("Pasta", "Spaghetti with Marinara Sauce, and a slice of sourdough bread", true, 3.89);
+    MenuItem* next() override {
+        return &items[position++];
     }
 
-    void addItem(std::string name, std::string desc, bool veg, double price) {
-        if (numberOfItems >= MAX_ITEMS) {
-            std::cerr << "Sorry, menu is full! Can't add item to menu\n";
-            return;
-        }
-        menuItems[numberOfItems++] = MenuItem(name, desc, veg, price);
-    }
-
-    const std::array<MenuItem, MAX_ITEMS>& getMenuItems() const { return menuItems; }
-
-    class DinerMenuIterator : public Iterator<MenuItem> {
-    public:
-        DinerMenuIterator(const std::array<MenuItem, MAX_ITEMS>& items) : items(items), position(0) {}
-        bool hasNext() const override { return position < items.size(); }
-        MenuItem* next() override { return const_cast<MenuItem*>(&items[position++]); }
-    private:
-        const std::array<MenuItem, MAX_ITEMS>& items;
-        size_t position;
-    };
-
-    std::unique_ptr<Iterator<MenuItem>> createIterator() {
-        return std::make_unique<DinerMenuIterator>(menuItems);
+    bool hasNext() const override {
+        return position < items.size() && !items[position].getName().empty();
     }
 
 private:
-    std::array<MenuItem, MAX_ITEMS> menuItems;
-    size_t numberOfItems = 0;
+    array<MenuItem, MAX_ITEMS>& items;
+    size_t position = 0;
 };
 
-// ==================== WAITRESS CLASS ====================
+
+
+
+// Waitress class
 class Waitress {
 public:
-    Waitress(PancakeHouseMenu* p, DinerMenu* d) : pancakeMenu(p), dinerMenu(d) {}
+    Waitress(PancakeHouseMenu* p, DinerMenu* d) : pancake(p), diner(d) {}
 
     void printMenu() const {
-        std::cout << "MENU\n---\nBREAKFAST\n";
-        printMenu(pancakeMenu->createIterator());
+        Iterator<MenuItem>* pancakeIterator = pancake->createIterator();
+        Iterator<MenuItem>* dinerIterator = diner->createIterator();
 
-        std::cout << "\nLUNCH\n";
-        printMenu(dinerMenu->createIterator());
+        cout << "Menu\n---\nBREAKFAST\n";
+        printItems(pancakeIterator);
+        cout << "\nLUNCH\n";
+        printItems(dinerIterator);
+
+        delete pancakeIterator;
+        delete dinerIterator;
     }
 
 private:
-    void printMenu(std::unique_ptr<Iterator<MenuItem>> iterator) const {
+    void printItems(Iterator<MenuItem>* iterator) const {
         while (iterator->hasNext()) {
             MenuItem* item = iterator->next();
-            std::cout << item->getName() << ", $" << item->getPrice() << " -- " << item->getDescription() << "\n";
+            cout << item->getName() << ", " << item->getPrice() << "$ -- "
+                 << item->getDescription() << "\n";
         }
     }
 
-    PancakeHouseMenu* pancakeMenu;
-    DinerMenu* dinerMenu;
+    PancakeHouseMenu* pancake;
+    DinerMenu* diner;
 };
 
-// ==================== MAIN FUNCTION ====================
+// Main Function
 int main() {
-    PancakeHouseMenu* pancakeHouseMenu = new PancakeHouseMenu();
-    DinerMenu* dinerMenu = new DinerMenu();
-
-    Waitress* waitress = new Waitress(pancakeHouseMenu, dinerMenu);
-    waitress->printMenu();
-
-    delete pancakeHouseMenu;
-    delete dinerMenu;
-    delete waitress;
-
+    PancakeHouseMenu pancakeMenu;
+    DinerMenu dinerMenu;
+    Waitress waitress(&pancakeMenu, &dinerMenu);
+    waitress.printMenu();
     return 0;
 }
